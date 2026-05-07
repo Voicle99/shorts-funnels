@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>購入ありがとうございます | 親子AI赤ペンプロンプトパック</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root { color-scheme: dark; --bg:#07101f; --card:#101b33; --text:#f7fbff; --muted:#b8c4d9; --accent:#ff375f; --yellow:#ffd60a; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(circle at 80% 0,#3a214f 0,transparent 30%),linear-gradient(180deg,#07101f,#05070d); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif; line-height:1.75; }
+    main { width:min(860px,92vw); margin:0 auto; padding:48px 0 80px; }
+    .badge { display:inline-block; color:var(--yellow); border:1px solid rgba(255,214,10,.5); border-radius:999px; padding:8px 14px; font-weight:900; }
+    h1 { font-size:clamp(36px,7vw,70px); line-height:1.05; letter-spacing:-.04em; margin:22px 0; }
+    .lead { font-size:clamp(18px,3vw,25px); color:var(--muted); max-width:760px; }
+    .card { background:rgba(16,27,51,.9); border:1px solid rgba(255,255,255,.12); border-radius:28px; padding:28px; margin-top:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); }
+    ol,ul { padding-left:1.2em; }
+    li { margin:.55em 0; font-size:18px; color:#dce6f8; }
+    .note { color:#93a4bf; font-size:14px; }
+    .warn { border-left:4px solid var(--yellow); padding:12px 16px; background:rgba(255,214,10,.08); border-radius:12px; color:#f7fbff; }
+    a { color:#ffd60a; font-weight:900; }
+    .cta { display:inline-block; text-decoration:none; background:linear-gradient(90deg,var(--accent),#ff9f0a); color:white; border-radius:16px; padding:16px 18px; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="badge">購入完了ページ</span>
+    <h1>ありがとうございます。<br>配送準備に入りました。</h1>
+    <p class="lead">親子AI赤ペンプロンプトパックをご購入いただきありがとうございます。数分以内に購入時のメール宛へ案内が届く想定です。</p>
+    <section class="card">
+      <h2>次に確認すること</h2>
+      <ol>
+        <li>Stripeの領収書メールを保管してください。</li>
+        <li>配送メールが届く場合は、件名「親子AI赤ペンプロンプトパック」を探してください。</li>
+        <li>迷惑メール/プロモーション欄も確認してください。</li>
+      </ol>
+      <p class="warn">このページは公開の購入完了案内です。盗用防止のため、ここには有料プロンプト本文を置いていません。</p>
+      <h2>届くまでに今日やること</h2>
+      <ul>
+        <li>宿題前に5分だけ自分で考える。</li>
+        <li>AIには「答えではなくヒントを3つ」と聞く。</li>
+        <li>最後にAIを閉じて、自分の言葉で30字に直す。</li>
+      </ul>
+      <a class="cta" href="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html" id="checklist-link">無料チェックリストも開く</a>
+      <p class="note">学習成果を保証するものではありません。学校/家庭の方針に合わせて使ってください。お子さんの個人情報をAIへ入力しないでください。</p>
+    </section>
+    <p class="note">Built: 2026-05-07T17:09:49+09:00 / Offer: ai_parenting_prompt_pack_v1</p>
+  </main>
+  <script>
+    (() => {
+      const eventEndpoint = "https://unsecularized-macy-superstylishly.ngrok-free.dev/api/event";
+      const params = new URLSearchParams(window.location.search);
+      const tracked = ['session_id','source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage'];
+      const rewrite = (selector, baseUrl) => {
+        const el = document.querySelector(selector);
+        if (!el) return null;
+        try {
+          const u = new URL(baseUrl);
+          for (const key of tracked) {
+            const value = params.get(key);
+            if (value) u.searchParams.set(key, value);
+          }
+          el.href = u.toString();
+        } catch (_err) {}
+        return el;
+      };
+      const sendEvent = (eventName) => {
+        if (!eventEndpoint) return;
+        const payload = {
+          event: eventName,
+          offer_id: 'ai_parenting_prompt_pack_v1',
+          page: 'purchase_success',
+          checkout_session_id: params.get('session_id') || '',
+          source_video_id: params.get('source_video_id') || '',
+          utm_source: params.get('utm_source') || '',
+          utm_medium: params.get('utm_medium') || '',
+          utm_campaign: params.get('utm_campaign') || '',
+          utm_content: params.get('utm_content') || '',
+          child_stage: params.get('child_stage') || 'undecided',
+          landing_path: window.location.pathname,
+          referrer: document.referrer || '',
+          ts_client: new Date().toISOString(),
+        };
+        const body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(eventEndpoint, new Blob([body], { type: 'application/json' }));
+          return;
+        }
+        fetch(eventEndpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body, keepalive:true, mode:'cors' }).catch(()=>{});
+      };
+      const checklist = rewrite('#checklist-link', 'https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html');
+      sendEvent('purchase_success_page_view');
+      if (checklist) checklist.addEventListener('click', () => sendEvent('purchase_delivery_help_click'));
+    })();
+  </script>
+</body>
+</html>
