@@ -27,6 +27,9 @@
     button { background:linear-gradient(90deg,var(--accent),#ff9f0a); color:white; font-weight:900; cursor:pointer; }
     button:disabled { opacity:.45; cursor:not-allowed; filter:grayscale(.4); }
     .note { color:#93a4bf; font-size:14px; line-height:1.7; margin-top:14px; }
+    .source-bridge { margin:18px 0 4px; border:1px solid rgba(255,214,10,.26); border-radius:18px; background:rgba(255,214,10,.08); padding:18px; line-height:1.75; }
+    .source-bridge[hidden] { display:none; }
+    .source-bridge strong { display:block; color:var(--yellow); margin-bottom:6px; }
     .preview { margin-top:18px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:18px; }
     .preview strong { color:var(--yellow); }
     .proof { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-top:24px; }
@@ -58,6 +61,7 @@
         </button>
       </div>
       <p class="helper" id="stage-helper">選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。</p>
+      <div class="source-bridge" id="source-bridge" hidden></div>
       <form class="cta" action="https://unsecularized-macy-superstylishly.ngrok-free.dev/api/optin" method="post">
         <input type="email" name="email" placeholder="メールアドレス" aria-label="メールアドレス" required  />
         <input type="hidden" name="offer_id" value="free_ai_parenting_rules_checklist_v1" />
@@ -81,7 +85,7 @@
       <div>答えではなく、ヒント3つ</div>
       <div>最後は自分語30字</div>
     </div>
-    <p class="note">Built: 2026-05-07T15:23:03+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
+    <p class="note">Built: 2026-05-07T19:46:37+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
   </main>
   <script>
     (() => {
@@ -97,6 +101,17 @@
         elementary: '小学生向けに、まず5分自力→ヒント3つ→親の一言の順で案内します。',
         junior_high: '中学生向けに、調べ学習/作文で自分語30字へ戻す順で案内します。',
         undecided: '選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。',
+      };
+      const sourceBridge = document.getElementById('source-bridge');
+      const sourceBridgeCopy = {
+        'ch03-017': {
+          title: '今見た「赤ペンの一文」を、今日の宿題ルールに落とします。',
+          body: 'まず無料チェックリストで「5分自力→ヒント3つ→自分語30字」の順番を固定してください。購入前デモでは、同じ型を小学生/中学生別プロンプトへ展開します。'
+        },
+        'wWWUW_grtRI': {
+          title: '今見た「赤ペンの一文」を、今日の宿題ルールに落とします。',
+          body: 'まず無料チェックリストで「5分自力→ヒント3つ→自分語30字」の順番を固定してください。購入前デモでは、同じ型を小学生/中学生別プロンプトへ展開します。'
+        }
       };
       const inferVideoIdFromReferrer = () => {
         const ref = document.referrer || '';
@@ -167,6 +182,15 @@
           mode: 'cors',
         }).catch(() => {});
       };
+      const ensureSourceBridge = () => {
+        if (!sourceBridge) return;
+        const sourceKey = params.get('utm_content') || (sourceVideoInput ? sourceVideoInput.value : '');
+        const copy = sourceBridgeCopy[sourceKey];
+        if (!copy) return;
+        sourceBridge.hidden = false;
+        sourceBridge.innerHTML = `<strong>${copy.title}</strong><span>${copy.body}</span>`;
+        sendEvent('source_bridge_view');
+      };
       const stageFromQuery = params.get('child_stage') || '';
       if (segmentButtons.length) {
         for (const button of segmentButtons) {
@@ -175,6 +199,7 @@
       }
       setStage(stageFromQuery || (childStageInput?.value || 'undecided'));
       rehydrateThanksUrl();
+      ensureSourceBridge();
       sendEvent('lp_view');
       form.addEventListener('submit', () => {
         rehydrateThanksUrl();
