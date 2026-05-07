@@ -17,6 +17,8 @@
     .card { margin-top:34px; background:rgba(16,27,51,.88); border:1px solid rgba(255,255,255,.12); border-radius:28px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); }
     ul { padding-left:1.2em; line-height:1.9; color:#dce6f8; font-size:18px; }
     .cta { display:grid; gap:14px; margin-top:24px; }
+    .secondary-cta { display:block; text-align:center; border:1px solid rgba(255,214,10,.48); border-radius:16px; padding:16px 18px; color:var(--yellow); text-decoration:none; font-weight:900; background:rgba(255,214,10,.07); }
+    .secondary-cta:hover { background:rgba(255,214,10,.13); }
     .segment-grid, .pain-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0 8px; }
     .segment-button, .pain-button { border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:16px; background:rgba(255,255,255,.04); color:var(--text); text-align:left; cursor:pointer; font-weight:800; }
     .segment-button small, .pain-button small { display:block; color:var(--muted); font-weight:600; margin-top:6px; line-height:1.5; }
@@ -104,6 +106,7 @@
         <input type="hidden" name="thanks_url" value="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html" />
         <button type="submit" >7日チェックリストを受け取る</button>
       </form>
+      <a class="secondary-cta" id="checklist-preview-link" href="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html">メールの前に、1ページだけ先に見る</a>
       <p class="note">送信後、チェックリストページが開きます。メールは連絡用に保存します。子どもの個人情報は不要です。</p>
       <div class="preview">
         <strong>受け取り後すぐ見えるサンプル</strong>
@@ -115,7 +118,7 @@
       <div>答えではなく、ヒント3つ</div>
       <div>最後は自分語30字</div>
     </div>
-    <p class="note">Built: 2026-05-07T20:39:42+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
+    <p class="note">Built: 2026-05-07T20:58:02+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
   </main>
   <script>
     (() => {
@@ -136,6 +139,7 @@
       };
       const painPointVariants = {"homework_copy": {"label": "宿題の丸写し", "detail": "答えをそのまま写してしまう流れを止めたい", "helper": "今日の宿題から『答えではなくヒント3つ』に切り替える導線を先に見せます。", "title": "最初に止める一文", "body": "『答えを出して』ではなく『5分考えた前提でヒント3つだけ返して』へ言い換える型です。", "prompt": "あなたは答えを出さない赤ペン先生です。子どもが5分考えた前提で、ヒント3つ・間違いやすい点1つ・自分語30字の確認だけを返してください。", "suggested_stage": "elementary"}, "writing_report": {"label": "作文・調べ学習", "detail": "コピペっぽい文章やレポートを自分語に戻したい", "helper": "根拠確認→弱点1つ→自分語30字の順で戻す型を先に見せます。", "title": "提出前に入れる一文", "body": "『完成文を書いて』ではなく『下書きの弱点1つと根拠強化2つだけ教えて』へ切り替える型です。", "prompt": "あなたは答えを完成させない赤ペン先生です。下書きがある前提で、根拠を強める視点2つ・弱い点1つ・自分語30字の確認質問だけを返してください。", "suggested_stage": "junior_high"}, "parent_wording": {"label": "親の声かけ", "detail": "『AI使うな』以外の言い方を知りたい", "helper": "責めずに順番を固定する親の一言を先に見せます。", "title": "親が先に変える一文", "body": "禁止ではなく『先に5分考えて、次にヒント3つだけ聞こう』へ変える声かけです。", "prompt": "親の声かけテンプレ: 『答えを取りに行く前に、まず5分考えてからAIにはヒント3つだけ聞こう。最後は30字で言い直してね。』", "suggested_stage": "undecided"}, "undecided": {"label": "まだ決めていない", "detail": "まず全体像を見てから決めたい", "helper": "選ぶと、LP・チェックリスト・次の提案がその悩みに寄ります。", "title": "まずは共通の型", "body": "親子AIルールの核は『5分自力→ヒント3つ→自分語30字』です。ここから悩み別に分岐します。", "prompt": "あなたは答えを出さない赤ペン先生です。ヒント・間違いやすい点・自分語30字の確認だけを返してください。", "suggested_stage": "undecided"}};
       const sourceBridge = document.getElementById('source-bridge');
+      const previewLink = document.getElementById('checklist-preview-link');
       const sourceBridgeCopy = {
         'ch03-017': {
           title: '今見た「赤ペンの一文」を、今日の宿題ルールに落とします。',
@@ -237,6 +241,18 @@
           thanksInput.value = target.toString();
         } catch (_err) {}
       };
+      const rehydratePreviewLink = () => {
+        if (!previewLink || !previewLink.href) return;
+        try {
+          const target = new URL(previewLink.href);
+          for (const name of hiddenNames) {
+            const input = form.querySelector(`input[name="${name}"]`);
+            const value = input && input.value ? input.value : defaults[name];
+            if (value) target.searchParams.set(name, value);
+          }
+          previewLink.href = target.toString();
+        } catch (_err) {}
+      };
       const ensureSourceBridge = () => {
         if (!sourceBridge) return;
         const sourceKey = params.get('utm_content') || (sourceVideoInput ? sourceVideoInput.value : '');
@@ -258,11 +274,17 @@
       setStage(stageFromQuery || (childStageInput?.value || 'undecided'));
       setPainPoint(painPointFromQuery || (painPointInput?.value || 'undecided'));
       rehydrateThanksUrl();
+      rehydratePreviewLink();
       ensureSourceBridge();
       sendEvent('lp_view');
       sendEvent('pain_point_preview_view');
+      if (previewLink) previewLink.addEventListener('click', () => {
+        rehydratePreviewLink();
+        sendEvent('checklist_preview_click');
+      });
       form.addEventListener('submit', () => {
         rehydrateThanksUrl();
+        rehydratePreviewLink();
         sendEvent('optin_submit_attempt');
       });
     })();
