@@ -17,11 +17,18 @@
     .card { margin-top:34px; background:rgba(16,27,51,.88); border:1px solid rgba(255,255,255,.12); border-radius:28px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); }
     ul { padding-left:1.2em; line-height:1.9; color:#dce6f8; font-size:18px; }
     .cta { display:grid; gap:14px; margin-top:28px; }
+    .segment-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0 8px; }
+    .segment-button { border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:16px; background:rgba(255,255,255,.04); color:var(--text); text-align:left; cursor:pointer; font-weight:800; }
+    .segment-button small { display:block; color:var(--muted); font-weight:600; margin-top:6px; line-height:1.5; }
+    .segment-button[data-active="true"] { border-color:rgba(255,214,10,.9); box-shadow:0 0 0 2px rgba(255,214,10,.16) inset; background:rgba(255,214,10,.08); }
+    .helper { color:#dce6f8; font-size:15px; line-height:1.7; margin:8px 0 0; }
     input, button { width:100%; border-radius:16px; border:0; padding:18px 20px; font-size:18px; }
     input { background:#f7fbff; color:#07101f; }
     button { background:linear-gradient(90deg,var(--accent),#ff9f0a); color:white; font-weight:900; cursor:pointer; }
     button:disabled { opacity:.45; cursor:not-allowed; filter:grayscale(.4); }
     .note { color:#93a4bf; font-size:14px; line-height:1.7; margin-top:14px; }
+    .preview { margin-top:18px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:18px; }
+    .preview strong { color:var(--yellow); }
     .proof { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-top:24px; }
     .proof div { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px; font-weight:800; }
   </style>
@@ -39,6 +46,18 @@
         <li>自分の言葉で30字に直す親子チェック</li>
         <li>小学生/中学生で変える声かけ例</li>
       </ul>
+      <h3>お子さんに近い方を先に選ぶ</h3>
+      <div class="segment-grid">
+        <button type="button" class="segment-button" data-child-stage="elementary">
+          小学生向け
+          <small>宿題の丸写し防止と「まず5分」ルールを優先</small>
+        </button>
+        <button type="button" class="segment-button" data-child-stage="junior_high">
+          中学生向け
+          <small>作文・調べ学習で「自分語30字」に戻す声かけを優先</small>
+        </button>
+      </div>
+      <p class="helper" id="stage-helper">選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。</p>
       <form class="cta" action="https://unsecularized-macy-superstylishly.ngrok-free.dev/api/optin" method="post">
         <input type="email" name="email" placeholder="メールアドレス" aria-label="メールアドレス" required  />
         <input type="hidden" name="offer_id" value="free_ai_parenting_rules_checklist_v1" />
@@ -47,17 +66,22 @@
         <input type="hidden" name="utm_medium" value="shorts" />
         <input type="hidden" name="utm_campaign" value="jp_ai_parenting_s01" />
         <input type="hidden" name="utm_content" value="ch03-010" />
+        <input type="hidden" name="child_stage" value="undecided" />
         <input type="hidden" name="thanks_url" value="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html" />
         <button type="submit" >7日チェックリストを受け取る</button>
       </form>
       <p class="note">送信後、チェックリストページが開きます。メールは連絡用に保存します。</p>
+      <div class="preview">
+        <strong>受け取り後すぐ見えるサンプル</strong><br>
+        「この答えをそのまま写せる形ではなく、ヒント3つに変えて」とAIへ聞き直す例を、その場で確認できます。
+      </div>
     </section>
     <div class="proof">
       <div>AI禁止より、順番を固定</div>
       <div>答えではなく、ヒント3つ</div>
       <div>最後は自分語30字</div>
     </div>
-    <p class="note">Built: 2026-05-07T13:14:29+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
+    <p class="note">Built: 2026-05-07T15:23:03+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
   </main>
   <script>
     (() => {
@@ -65,8 +89,15 @@
       if (!form) return;
       const eventEndpoint = "https://unsecularized-macy-superstylishly.ngrok-free.dev/api/event";
       const params = new URLSearchParams(window.location.search);
-      const hiddenNames = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content'];
+      const hiddenNames = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage'];
       const defaults = {};
+      const stageHelper = document.getElementById('stage-helper');
+      const segmentButtons = Array.from(document.querySelectorAll('.segment-button'));
+      const stageCopy = {
+        elementary: '小学生向けに、まず5分自力→ヒント3つ→親の一言の順で案内します。',
+        junior_high: '中学生向けに、調べ学習/作文で自分語30字へ戻す順で案内します。',
+        undecided: '選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。',
+      };
       const inferVideoIdFromReferrer = () => {
         const ref = document.referrer || '';
         const matched = ref.match(/(?:youtube\.com\/(?:shorts|watch)\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
@@ -80,10 +111,20 @@
         if (override) input.value = override;
       }
       const sourceVideoInput = form.querySelector('input[name="source_video_id"]');
+      const childStageInput = form.querySelector('input[name="child_stage"]');
       if (sourceVideoInput && !params.get('source_video_id')) {
         const inferredVideoId = inferVideoIdFromReferrer();
         if (inferredVideoId) sourceVideoInput.value = inferredVideoId;
       }
+      const setStage = (value, emit=false) => {
+        const stage = value || 'undecided';
+        if (childStageInput) childStageInput.value = stage;
+        for (const button of segmentButtons) {
+          button.dataset.active = button.dataset.childStage === stage ? 'true' : 'false';
+        }
+        if (stageHelper) stageHelper.textContent = stageCopy[stage] || stageCopy.undecided;
+        if (emit) sendEvent('segment_select');
+      };
       const thanksInput = form.querySelector('input[name="thanks_url"]');
       const rehydrateThanksUrl = () => {
         if (!thanksInput || !thanksInput.value) return;
@@ -108,6 +149,7 @@
           utm_medium: form.querySelector('input[name="utm_medium"]')?.value || '',
           utm_campaign: form.querySelector('input[name="utm_campaign"]')?.value || '',
           utm_content: form.querySelector('input[name="utm_content"]')?.value || '',
+          child_stage: form.querySelector('input[name="child_stage"]')?.value || 'undecided',
           landing_path: window.location.pathname,
           referrer: document.referrer || '',
           ts_client: new Date().toISOString(),
@@ -125,6 +167,13 @@
           mode: 'cors',
         }).catch(() => {});
       };
+      const stageFromQuery = params.get('child_stage') || '';
+      if (segmentButtons.length) {
+        for (const button of segmentButtons) {
+          button.addEventListener('click', () => setStage(button.dataset.childStage || 'undecided', true));
+        }
+      }
+      setStage(stageFromQuery || (childStageInput?.value || 'undecided'));
       rehydrateThanksUrl();
       sendEvent('lp_view');
       form.addEventListener('submit', () => {
