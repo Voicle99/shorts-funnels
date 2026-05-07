@@ -16,11 +16,11 @@
     .lead { font-size:clamp(18px,3vw,26px); color:var(--muted); line-height:1.65; max-width:760px; }
     .card { margin-top:34px; background:rgba(16,27,51,.88); border:1px solid rgba(255,255,255,.12); border-radius:28px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,.35); }
     ul { padding-left:1.2em; line-height:1.9; color:#dce6f8; font-size:18px; }
-    .cta { display:grid; gap:14px; margin-top:28px; }
-    .segment-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0 8px; }
-    .segment-button { border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:16px; background:rgba(255,255,255,.04); color:var(--text); text-align:left; cursor:pointer; font-weight:800; }
-    .segment-button small { display:block; color:var(--muted); font-weight:600; margin-top:6px; line-height:1.5; }
-    .segment-button[data-active="true"] { border-color:rgba(255,214,10,.9); box-shadow:0 0 0 2px rgba(255,214,10,.16) inset; background:rgba(255,214,10,.08); }
+    .cta { display:grid; gap:14px; margin-top:24px; }
+    .segment-grid, .pain-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0 8px; }
+    .segment-button, .pain-button { border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:16px; background:rgba(255,255,255,.04); color:var(--text); text-align:left; cursor:pointer; font-weight:800; }
+    .segment-button small, .pain-button small { display:block; color:var(--muted); font-weight:600; margin-top:6px; line-height:1.5; }
+    .segment-button[data-active="true"], .pain-button[data-active="true"] { border-color:rgba(255,214,10,.9); box-shadow:0 0 0 2px rgba(255,214,10,.16) inset; background:rgba(255,214,10,.08); }
     .helper { color:#dce6f8; font-size:15px; line-height:1.7; margin:8px 0 0; }
     input, button { width:100%; border-radius:16px; border:0; padding:18px 20px; font-size:18px; }
     input { background:#f7fbff; color:#07101f; }
@@ -30,8 +30,11 @@
     .source-bridge { margin:18px 0 4px; border:1px solid rgba(255,214,10,.26); border-radius:18px; background:rgba(255,214,10,.08); padding:18px; line-height:1.75; }
     .source-bridge[hidden] { display:none; }
     .source-bridge strong { display:block; color:var(--yellow); margin-bottom:6px; }
-    .preview { margin-top:18px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:18px; }
-    .preview strong { color:var(--yellow); }
+    .pain-preview, .preview { margin-top:18px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:18px; }
+    .pain-preview strong, .preview strong { color:var(--yellow); display:block; margin-bottom:8px; }
+    .pain-preview code { display:block; white-space:pre-wrap; color:#f7fbff; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:14px; line-height:1.7; margin-top:12px; }
+    .privacy-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-top:18px; }
+    .privacy-strip div { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px; color:#dce6f8; font-weight:700; }
     .proof { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-top:24px; }
     .proof div { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px; font-weight:800; }
   </style>
@@ -62,6 +65,32 @@
       </div>
       <p class="helper" id="stage-helper">選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。</p>
       <div class="source-bridge" id="source-bridge" hidden></div>
+      <h3>今いちばん近い困りごとを選ぶ</h3>
+      <div class="pain-grid">
+        <button type="button" class="pain-button" data-pain-point="homework_copy">
+          宿題の丸写し
+          <small>答えをそのまま写してしまう流れを止めたい</small>
+        </button>
+        <button type="button" class="pain-button" data-pain-point="writing_report">
+          作文・調べ学習
+          <small>コピペっぽい文章を自分語に戻したい</small>
+        </button>
+        <button type="button" class="pain-button" data-pain-point="parent_wording">
+          親の声かけ
+          <small>『AI使うな』以外の言い方を知りたい</small>
+        </button>
+      </div>
+      <p class="helper" id="pain-helper">選ぶと、先に見るサンプルと次ページの導線がその悩みに寄ります。</p>
+      <div class="pain-preview" id="pain-preview">
+        <strong id="pain-preview-title">まずは共通の型</strong>
+        <span id="pain-preview-body">親子AIルールの核は『5分自力→ヒント3つ→自分語30字』です。ここから悩み別に分岐します。</span>
+        <code id="pain-preview-prompt">あなたは答えを出さない赤ペン先生です。ヒント・間違いやすい点・自分語30字の確認だけを返してください。</code>
+      </div>
+      <div class="privacy-strip">
+        <div>10秒で受け取り開始</div>
+        <div>子どもの個人情報は不要</div>
+        <div>送信後すぐ画面でも確認</div>
+      </div>
       <form class="cta" action="https://unsecularized-macy-superstylishly.ngrok-free.dev/api/optin" method="post">
         <input type="email" name="email" placeholder="メールアドレス" aria-label="メールアドレス" required  />
         <input type="hidden" name="offer_id" value="free_ai_parenting_rules_checklist_v1" />
@@ -71,12 +100,13 @@
         <input type="hidden" name="utm_campaign" value="jp_ai_parenting_s01" />
         <input type="hidden" name="utm_content" value="ch03-010" />
         <input type="hidden" name="child_stage" value="undecided" />
+        <input type="hidden" name="pain_point" value="undecided" />
         <input type="hidden" name="thanks_url" value="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html" />
         <button type="submit" >7日チェックリストを受け取る</button>
       </form>
-      <p class="note">送信後、チェックリストページが開きます。メールは連絡用に保存します。</p>
+      <p class="note">送信後、チェックリストページが開きます。メールは連絡用に保存します。子どもの個人情報は不要です。</p>
       <div class="preview">
-        <strong>受け取り後すぐ見えるサンプル</strong><br>
+        <strong>受け取り後すぐ見えるサンプル</strong>
         「この答えをそのまま写せる形ではなく、ヒント3つに変えて」とAIへ聞き直す例を、その場で確認できます。
       </div>
     </section>
@@ -85,7 +115,7 @@
       <div>答えではなく、ヒント3つ</div>
       <div>最後は自分語30字</div>
     </div>
-    <p class="note">Built: 2026-05-07T19:46:37+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
+    <p class="note">Built: 2026-05-07T20:39:42+09:00 / Offer: free_ai_parenting_rules_checklist_v1</p>
   </main>
   <script>
     (() => {
@@ -93,15 +123,18 @@
       if (!form) return;
       const eventEndpoint = "https://unsecularized-macy-superstylishly.ngrok-free.dev/api/event";
       const params = new URLSearchParams(window.location.search);
-      const hiddenNames = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage'];
+      const hiddenNames = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage','pain_point'];
       const defaults = {};
       const stageHelper = document.getElementById('stage-helper');
+      const painHelper = document.getElementById('pain-helper');
       const segmentButtons = Array.from(document.querySelectorAll('.segment-button'));
+      const painButtons = Array.from(document.querySelectorAll('.pain-button'));
       const stageCopy = {
         elementary: '小学生向けに、まず5分自力→ヒント3つ→親の一言の順で案内します。',
         junior_high: '中学生向けに、調べ学習/作文で自分語30字へ戻す順で案内します。',
         undecided: '選ぶと、チェックリスト後のおすすめ導線も小学生/中学生向けに引き継ぎます。',
       };
+      const painPointVariants = {"homework_copy": {"label": "宿題の丸写し", "detail": "答えをそのまま写してしまう流れを止めたい", "helper": "今日の宿題から『答えではなくヒント3つ』に切り替える導線を先に見せます。", "title": "最初に止める一文", "body": "『答えを出して』ではなく『5分考えた前提でヒント3つだけ返して』へ言い換える型です。", "prompt": "あなたは答えを出さない赤ペン先生です。子どもが5分考えた前提で、ヒント3つ・間違いやすい点1つ・自分語30字の確認だけを返してください。", "suggested_stage": "elementary"}, "writing_report": {"label": "作文・調べ学習", "detail": "コピペっぽい文章やレポートを自分語に戻したい", "helper": "根拠確認→弱点1つ→自分語30字の順で戻す型を先に見せます。", "title": "提出前に入れる一文", "body": "『完成文を書いて』ではなく『下書きの弱点1つと根拠強化2つだけ教えて』へ切り替える型です。", "prompt": "あなたは答えを完成させない赤ペン先生です。下書きがある前提で、根拠を強める視点2つ・弱い点1つ・自分語30字の確認質問だけを返してください。", "suggested_stage": "junior_high"}, "parent_wording": {"label": "親の声かけ", "detail": "『AI使うな』以外の言い方を知りたい", "helper": "責めずに順番を固定する親の一言を先に見せます。", "title": "親が先に変える一文", "body": "禁止ではなく『先に5分考えて、次にヒント3つだけ聞こう』へ変える声かけです。", "prompt": "親の声かけテンプレ: 『答えを取りに行く前に、まず5分考えてからAIにはヒント3つだけ聞こう。最後は30字で言い直してね。』", "suggested_stage": "undecided"}, "undecided": {"label": "まだ決めていない", "detail": "まず全体像を見てから決めたい", "helper": "選ぶと、LP・チェックリスト・次の提案がその悩みに寄ります。", "title": "まずは共通の型", "body": "親子AIルールの核は『5分自力→ヒント3つ→自分語30字』です。ここから悩み別に分岐します。", "prompt": "あなたは答えを出さない赤ペン先生です。ヒント・間違いやすい点・自分語30字の確認だけを返してください。", "suggested_stage": "undecided"}};
       const sourceBridge = document.getElementById('source-bridge');
       const sourceBridgeCopy = {
         'ch03-017': {
@@ -113,6 +146,7 @@
           body: 'まず無料チェックリストで「5分自力→ヒント3つ→自分語30字」の順番を固定してください。購入前デモでは、同じ型を小学生/中学生別プロンプトへ展開します。'
         }
       };
+      const sourceDefaultPainPoints = {"ch03-017": "homework_copy", "wWWUW_grtRI": "homework_copy"};
       const inferVideoIdFromReferrer = () => {
         const ref = document.referrer || '';
         const matched = ref.match(/(?:youtube\.com\/(?:shorts|watch)\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
@@ -127,32 +161,14 @@
       }
       const sourceVideoInput = form.querySelector('input[name="source_video_id"]');
       const childStageInput = form.querySelector('input[name="child_stage"]');
+      const painPointInput = form.querySelector('input[name="pain_point"]');
+      const painPreviewTitle = document.getElementById('pain-preview-title');
+      const painPreviewBody = document.getElementById('pain-preview-body');
+      const painPreviewPrompt = document.getElementById('pain-preview-prompt');
       if (sourceVideoInput && !params.get('source_video_id')) {
         const inferredVideoId = inferVideoIdFromReferrer();
         if (inferredVideoId) sourceVideoInput.value = inferredVideoId;
       }
-      const setStage = (value, emit=false) => {
-        const stage = value || 'undecided';
-        if (childStageInput) childStageInput.value = stage;
-        for (const button of segmentButtons) {
-          button.dataset.active = button.dataset.childStage === stage ? 'true' : 'false';
-        }
-        if (stageHelper) stageHelper.textContent = stageCopy[stage] || stageCopy.undecided;
-        if (emit) sendEvent('segment_select');
-      };
-      const thanksInput = form.querySelector('input[name="thanks_url"]');
-      const rehydrateThanksUrl = () => {
-        if (!thanksInput || !thanksInput.value) return;
-        try {
-          const target = new URL(thanksInput.value);
-          for (const name of hiddenNames) {
-            const input = form.querySelector(`input[name="${name}"]`);
-            const value = input && input.value ? input.value : defaults[name];
-            if (value) target.searchParams.set(name, value);
-          }
-          thanksInput.value = target.toString();
-        } catch (_err) {}
-      };
       const sendEvent = (eventName) => {
         if (!eventEndpoint) return;
         const payload = {
@@ -165,6 +181,7 @@
           utm_campaign: form.querySelector('input[name="utm_campaign"]')?.value || '',
           utm_content: form.querySelector('input[name="utm_content"]')?.value || '',
           child_stage: form.querySelector('input[name="child_stage"]')?.value || 'undecided',
+          pain_point: form.querySelector('input[name="pain_point"]')?.value || 'undecided',
           landing_path: window.location.pathname,
           referrer: document.referrer || '',
           ts_client: new Date().toISOString(),
@@ -182,6 +199,44 @@
           mode: 'cors',
         }).catch(() => {});
       };
+      const setStage = (value, emit = false) => {
+        const stage = value || 'undecided';
+        if (childStageInput) childStageInput.value = stage;
+        for (const button of segmentButtons) {
+          button.dataset.active = button.dataset.childStage === stage ? 'true' : 'false';
+        }
+        if (stageHelper) stageHelper.textContent = stageCopy[stage] || stageCopy.undecided;
+        if (emit) sendEvent('segment_select');
+      };
+      const setPainPoint = (value, emit = false) => {
+        const point = painPointVariants[value] ? value : 'undecided';
+        const variant = painPointVariants[point] || painPointVariants.undecided;
+        if (painPointInput) painPointInput.value = point;
+        for (const button of painButtons) {
+          button.dataset.active = button.dataset.painPoint === point ? 'true' : 'false';
+        }
+        if (painHelper) painHelper.textContent = variant.helper;
+        if (painPreviewTitle) painPreviewTitle.textContent = variant.title;
+        if (painPreviewBody) painPreviewBody.textContent = variant.body;
+        if (painPreviewPrompt) painPreviewPrompt.textContent = variant.prompt;
+        if ((childStageInput?.value || 'undecided') === 'undecided' && variant.suggested_stage && variant.suggested_stage !== 'undecided') {
+          setStage(variant.suggested_stage, false);
+        }
+        if (emit) sendEvent('pain_point_select');
+      };
+      const thanksInput = form.querySelector('input[name="thanks_url"]');
+      const rehydrateThanksUrl = () => {
+        if (!thanksInput || !thanksInput.value) return;
+        try {
+          const target = new URL(thanksInput.value);
+          for (const name of hiddenNames) {
+            const input = form.querySelector(`input[name="${name}"]`);
+            const value = input && input.value ? input.value : defaults[name];
+            if (value) target.searchParams.set(name, value);
+          }
+          thanksInput.value = target.toString();
+        } catch (_err) {}
+      };
       const ensureSourceBridge = () => {
         if (!sourceBridge) return;
         const sourceKey = params.get('utm_content') || (sourceVideoInput ? sourceVideoInput.value : '');
@@ -191,16 +246,21 @@
         sourceBridge.innerHTML = `<strong>${copy.title}</strong><span>${copy.body}</span>`;
         sendEvent('source_bridge_view');
       };
+      const sourceKey = params.get('utm_content') || (sourceVideoInput ? sourceVideoInput.value : '');
+      const painPointFromQuery = params.get('pain_point') || sourceDefaultPainPoints[sourceKey] || '';
       const stageFromQuery = params.get('child_stage') || '';
-      if (segmentButtons.length) {
-        for (const button of segmentButtons) {
-          button.addEventListener('click', () => setStage(button.dataset.childStage || 'undecided', true));
-        }
+      for (const button of segmentButtons) {
+        button.addEventListener('click', () => setStage(button.dataset.childStage || 'undecided', true));
+      }
+      for (const button of painButtons) {
+        button.addEventListener('click', () => setPainPoint(button.dataset.painPoint || 'undecided', true));
       }
       setStage(stageFromQuery || (childStageInput?.value || 'undecided'));
+      setPainPoint(painPointFromQuery || (painPointInput?.value || 'undecided'));
       rehydrateThanksUrl();
       ensureSourceBridge();
       sendEvent('lp_view');
+      sendEvent('pain_point_preview_view');
       form.addEventListener('submit', () => {
         rehydrateThanksUrl();
         sendEvent('optin_submit_attempt');

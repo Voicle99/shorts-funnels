@@ -18,11 +18,12 @@
     ul { padding-left:1.2em; }
     li { margin:.45em 0; font-size:18px; color:#dce6f8; }
     .price { font-size:42px; font-weight:1000; color:#fff; margin:18px 0; }
-    .cta { display:inline-block; width:100%; text-align:center; text-decoration:none; background:linear-gradient(90deg,var(--accent),#ff9f0a); color:white; font-weight:1000; border-radius:18px; padding:20px 22px; font-size:20px; margin-top:18px; }
+    .cta { display:inline-block; width:100%; text-align:center; text-decoration:none; background:linear-gradient(90deg,var(--accent),#ff9f0a); color:white; font-weight:1000; border-radius:18px; padding:20px 22px; font-size:20px; margin-top:18px; border:0; cursor:pointer; }
     .sub { color:#93a4bf; font-size:14px; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:20px; }
     .mini { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px; font-weight:800; }
-    .stage-note { margin-top:16px; padding:16px 18px; border-radius:18px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#dce6f8; }
+    .stage-note, .pain-point-note { margin-top:16px; padding:16px 18px; border-radius:18px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:#dce6f8; }
+    .pain-point-note strong { display:block; color:#ffd60a; margin-bottom:6px; }
     .demo { margin-top:22px; border-radius:24px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:22px; }
     .demo h3 { margin:0 0 10px; color:var(--yellow); font-size:24px; }
     .demo-switch { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 14px; }
@@ -53,6 +54,7 @@
         <li>7日チェックリスト連動ワーク</li>
       </ul>
       <div class="stage-note" id="stage-note">小学生/中学生のどちらでも使えます。チェックリストで選んだ導線があれば、その使い分けを引き継ぎます。</div>
+      <div class="pain-point-note" id="pain-point-note" hidden></div>
       <section class="demo" aria-label="購入前デモ">
         <h3>購入前に1本だけ見る</h3>
         <p class="demo-context" id="demo-context">まずは『答えをもらう』から『考えを直す』へ切り替える1本だけを見せます。</p>
@@ -85,21 +87,26 @@
       <div class="mini">ヒント化する</div>
       <div class="mini">自分語に戻す</div>
     </div>
-    <p class="sub">Built: 2026-05-07T16:28:13+09:00 / Offer: ai_parenting_prompt_pack_v1</p>
+    <p class="sub">Built: 2026-05-07T20:39:42+09:00 / Offer: ai_parenting_prompt_pack_v1 / Checkout mode: static_payment_link</p>
     <p><a href="https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html" id="back-link">無料チェックリストへ戻る</a></p>
   </main>
   <script>
     (() => {
       const eventEndpoint = "https://unsecularized-macy-superstylishly.ngrok-free.dev/api/event";
       const params = new URLSearchParams(window.location.search);
-      const tracked = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage'];
+      const tracked = ['source_video_id','utm_source','utm_medium','utm_campaign','utm_content','child_stage','pain_point'];
+      const checkoutMode = "static_payment_link";
+      const checkoutUrl = "https://buy.stripe.com/28EcN4fub5Rw3eA9PU5sA00";
+      const fallbackCheckoutUrl = "";
       const stageNote = document.getElementById('stage-note');
+      const painNote = document.getElementById('pain-point-note');
       const demoContext = document.getElementById('demo-context');
       const demoBad = document.getElementById('demo-bad');
       const demoGood = document.getElementById('demo-good');
       const demoParent = document.getElementById('demo-parent');
       const switchButtons = Array.from(document.querySelectorAll('.demo-switch button'));
       const demoVariants = {"elementary": {"label": "小学生向けデモ", "context": "宿題の丸写しを止めたい家庭向け。まず5分自力→ヒント3つ→親の一言の順で使います。", "bad": "この問題の答えを教えて。", "good": "あなたは答えを出さない赤ペン先生です。子どもが先に5分考えた前提で、1) ヒントを3つ 2) 間違いやすい点を1つ 3) 最後に自分の言葉で30字に直す質問 だけを出してください。個人情報は使いません。", "parent": "答えを写す前に、AIからもらったヒントを一つだけ自分の言葉で言ってみよう。"}, "junior_high": {"label": "中学生向けデモ", "context": "作文・調べ学習のコピペを防ぎたい家庭向け。根拠確認→弱点1つ→自分語30字を優先します。", "bad": "このテーマのレポートを書いて。", "good": "あなたは答えを完成させない赤ペン先生です。中学生が自分で下書きを書いた前提で、1) 根拠を強める視点を2つ 2) 弱いところを1つ 3) 自分の言葉で30字に直す確認質問 を返してください。個人情報は使いません。", "parent": "そのまま提出する前に、AIに直された点を30字で言い直してみよう。"}, "undecided": {"label": "共通デモ", "context": "まずは『答えをもらう』から『考えを直す』へ切り替える1本だけを見せます。", "bad": "この問題の答えを教えて。", "good": "あなたは答えを出さない赤ペン先生です。子どもが先に考えた前提で、ヒント・間違いやすい点・自分語30字の確認だけを返してください。個人情報は使いません。", "parent": "答えを写す前に、AIからもらったヒントを一つだけ自分の言葉で言ってみよう。"}};
+      const painPointVariants = {"homework_copy": {"label": "宿題の丸写し", "body": "このパックは『答えを取る』流れを、ヒント3つ→自分語30字へ戻すテンプレをすぐ使える形でまとめています。"}, "writing_report": {"label": "作文・調べ学習", "body": "完成文のコピペではなく、根拠強化2つ・弱点1つ・言い直し30字へ戻すテンプレを優先表示します。"}, "parent_wording": {"label": "親の声かけ", "body": "『AI使うな』を言い換える親の一言テンプレから始められる構成です。"}};
       const stageCopy = {
         elementary: '小学生向け: 宿題前の5分自力と親の一言テンプレから使う前提で構成しています。',
         junior_high: '中学生向け: 作文・調べ学習で自分語30字へ戻すテンプレから使う前提で構成しています。',
@@ -114,25 +121,29 @@
             const value = params.get(key);
             if (value) u.searchParams.set(key, value);
           }
-          el.href = u.toString();
+          if ('href' in el) el.href = u.toString();
+          return u.toString();
         } catch (_err) {}
-        return el;
+        return null;
       };
-      const sendEvent = (eventName) => {
+      const sendEvent = (eventName, extra = {}) => {
         if (!eventEndpoint) return;
         const payload = {
           event: eventName,
           offer_id: 'ai_parenting_prompt_pack_v1',
           page: 'tripwire',
+          checkout_mode: checkoutMode,
           source_video_id: params.get('source_video_id') || '',
           utm_source: params.get('utm_source') || '',
           utm_medium: params.get('utm_medium') || '',
           utm_campaign: params.get('utm_campaign') || '',
           utm_content: params.get('utm_content') || '',
           child_stage: params.get('child_stage') || 'undecided',
+          pain_point: params.get('pain_point') || 'undecided',
           landing_path: window.location.pathname,
           referrer: document.referrer || '',
           ts_client: new Date().toISOString(),
+          ...extra,
         };
         const body = JSON.stringify(payload);
         if (navigator.sendBeacon) {
@@ -146,6 +157,13 @@
           keepalive: true,
           mode: 'cors',
         }).catch(() => {});
+      };
+      const applyPainPoint = () => {
+        const point = params.get('pain_point') || 'undecided';
+        const copy = painPointVariants[point];
+        if (!copy || !painNote) return;
+        painNote.hidden = false;
+        painNote.innerHTML = `<strong>${copy.label}</strong>${copy.body}`;
       };
       const applyStage = (stage, emit = false) => {
         const value = demoVariants[stage] ? stage : 'undecided';
@@ -161,16 +179,69 @@
         }
         if (emit) sendEvent('tripwire_demo_variant_select');
       };
+      const setStatus = (text) => {
+        const el = document.getElementById('checkout-status');
+        if (el) el.textContent = text;
+      };
+      const createCheckoutSession = async () => {
+        const res = await fetch(checkoutUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source_video_id: params.get('source_video_id') || '',
+            utm_source: params.get('utm_source') || '',
+            utm_medium: params.get('utm_medium') || '',
+            utm_campaign: params.get('utm_campaign') || '',
+            utm_content: params.get('utm_content') || '',
+            child_stage: params.get('child_stage') || 'undecided',
+            pain_point: params.get('pain_point') || 'undecided',
+          }),
+        });
+        let payload = {};
+        try { payload = await res.json(); } catch (_err) { payload = {}; }
+        if (!res.ok || !payload.checkout_url) {
+          throw new Error(payload.error || `checkout_session_failed_${res.status}`);
+        }
+        return payload.checkout_url;
+      };
+      const checkoutEl = document.getElementById('checkout-cta');
+      const fallbackLink = rewrite('#checkout-fallback-link', fallbackCheckoutUrl);
+      rewrite('#back-link', "https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html");
       for (const button of switchButtons) {
         button.addEventListener('click', () => applyStage(button.dataset.childStage || 'undecided', true));
       }
       const childStage = params.get('child_stage') || 'undecided';
       applyStage(childStage);
-      const checkoutEl = rewrite('#checkout-cta', "https://buy.stripe.com/28EcN4fub5Rw3eA9PU5sA00");
-      rewrite('#back-link', "https://voicle99.github.io/shorts-funnels/ai-parenting-rules/checklist.html");
+      applyPainPoint();
+      if (checkoutMode === 'static_payment_link') rewrite('#checkout-cta', checkoutUrl);
       sendEvent('tripwire_page_view');
       sendEvent('tripwire_demo_view');
-      if (checkoutEl) checkoutEl.addEventListener('click', () => sendEvent('stripe_checkout_click'));
+      if ((params.get('pain_point') || 'undecided') !== 'undecided') sendEvent('pain_point_offer_view');
+      if (checkoutEl) checkoutEl.addEventListener('click', async (event) => {
+        sendEvent('stripe_checkout_click');
+        if (checkoutMode !== 'backend_checkout_session') return;
+        event.preventDefault();
+        checkoutEl.setAttribute('disabled', 'disabled');
+        setStatus('決済ページを準備しています…');
+        sendEvent('checkout_session_request');
+        try {
+          const redirectUrl = await createCheckoutSession();
+          sendEvent('checkout_session_redirect', { checkout_session_url_host: (new URL(redirectUrl)).host });
+          window.location.href = redirectUrl;
+        } catch (err) {
+          const code = err && err.message ? String(err.message) : 'unknown_checkout_session_error';
+          sendEvent('checkout_session_error', { error_code: code });
+          if (fallbackLink) {
+            setStatus('接続に失敗したため通常購入リンクへ切り替えます。');
+            sendEvent('checkout_session_fallback_static', { fallback_host: (new URL(fallbackLink)).host });
+            window.location.href = fallbackLink;
+            return;
+          }
+          setStatus('一時的に決済ページを準備できません。少し時間をおいて再試行してください。');
+          checkoutEl.removeAttribute('disabled');
+        }
+      });
+      if (checkoutMode === 'backend_checkout_session') setStatus('クリック後にStripe決済ページへ移動します。');
     })();
   </script>
 </body>
